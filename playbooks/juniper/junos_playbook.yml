@@ -1,0 +1,26 @@
+---
+- name: Get Device Facts
+  hosts: "vsrx-devices"
+  connection: local
+  gather_facts: false
+  
+  vars:
+    cli:
+      host: "{{ ansible_host }}"
+      username: "{{ ansible_user }}"
+      password: "{{ ansible_password }}"
+
+  tasks:      
+    - name: run show version on remote devices
+      junos_command:
+        commands: show configuration
+        display: set
+
+      register: junos_result
+
+    - name: Print response
+      debug:
+        var: junos_result
+
+    - name: copy output to file
+      copy: content="{{ junos_result.stdout_lines }}" dest=/home/admin/ansible/output/{{ inventory_hostname }}.txt

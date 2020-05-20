@@ -1,0 +1,37 @@
+---
+- name: show version
+  hosts: "vyos-devices"
+  gather_facts: false
+  connection: local
+
+  vars:
+    cli:
+      host: "{{ ansible_host }}"
+      username: "{{ ansible_user }}"
+      password: "{{ ansible_password }}"
+
+  tasks:
+    - name: show configuration on ethernet devices eth0 and eth1
+      vyos_command:
+        commands:
+          - show interfaces ethernet {{ item }}
+      with_items:
+        - eth0
+        - eth1
+
+    - name: run multiple commands and check if version output contains specific version string
+      vyos_command:
+        commands:
+          - show version
+          - show hardware cpu
+        wait_for:
+          - "result[0] contains 'VyOS 1.1.8'"
+
+    - name: remove dhcp from eth1
+      vyos_command:
+        commands:
+          - configure
+          - delete interfaces ethernet eth1 address dhcp
+          - commit
+          - save
+          - exit
