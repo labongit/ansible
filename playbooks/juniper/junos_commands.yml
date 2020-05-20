@@ -1,0 +1,36 @@
+---
+- name: Run JUNOS command and backup results
+  connection: local
+  gather_facts: false
+  hosts: "vsrx_devices"
+  roles: 
+    - Juniper.junos
+
+  vars_prompt:
+    - name: ADMPASS
+      prompt: Password
+      private: yes
+
+  tasks:
+    - name: run commands
+      juniper_junos_command:
+        host: "{{ ansible_host  }}"
+        user: "{{ ansible_user  }}"
+        passwd: "{{ ADMPASS  }}"
+        commands: "{{ item }}"
+        formats:
+          - "text"
+
+      register: output
+      with_items: 
+          - "show version"
+          - "show route"
+
+
+    - name: Print response
+      debug:
+        var: output.stdout_lines
+
+    - name: copy output to file
+      copy: content="{{ output }}" dest=/home/admin/ansible/output/{{ inventory_hostname }}.txt
+...
