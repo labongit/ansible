@@ -1,0 +1,9 @@
+[vsrx_devices]
+vsrx_1
+vsrx_2
+
+[vyos_devices]
+vyos_1
+
+[vsrx_devices:vars]
+ansible_python_interpreter=/usr/bin/python3

@@ -1,0 +1,4 @@
+---
+ansible_host: 10.1.1.12
+ansible_user: admin
+
