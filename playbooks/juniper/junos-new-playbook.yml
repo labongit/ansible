@@ -6,19 +6,23 @@
   roles:
     - Juniper.junos
   vars_prompt:
-    - name: ADMUSER
-      prompt: Username
-      private: no
-    - name: ADMPASS
-      prompt: password
-      private: yes
+#    - name: ADMUSER
+#      prompt: Username
+#      private: no
+#    - name: ADMPASS
+#      prompt: password
+#      private: yes
   tasks:
+    - name: Checking NETCONF connectivity
+      wait_for: 
+        host: "{{ ansible_host }}"
+        port: 830 
+        timeout: 5
     - name: Get junos facts
       juniper_junos_facts:
         host: "{{ ansible_host }}"
-        user: "{{ ADMUSER }}"
-        passwd: "{{ ADMPASS }}"
-      register: junos
+      register: output
     - name: Print facts
       debug:
-        var: junos
+        var: output
+

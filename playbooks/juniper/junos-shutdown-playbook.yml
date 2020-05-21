@@ -1,20 +1,21 @@
 ---
 - name: Get Device Facts
-  hosts: "vsrx-devices"
+  hosts: "vsrx_devices"
   connection: local
   gather_facts: false
   roles:
     - Juniper.junos
 
-  vars:
-    ansible_python_interpreter: /usr/bin/python3
-    cli:
-      host: "{{ ansible_host }}"
-      username: "{{ ansible_user }}"
-      password: "{{ ansible_password }}"
+  vars_prompt:
+    - name: ADMPASS
+      prompt: Password
+      private: yes
 
   tasks:
     - name: Shut down all REs
       juniper_junos_system:
+        host: "{{ ansible_host  }}"
+        user: "{{ ansible_user  }}"
+        passwd: "{{ ADMPASS  }}"
         action: "shutdown"
         at: "now"

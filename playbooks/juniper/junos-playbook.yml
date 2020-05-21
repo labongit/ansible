@@ -1,0 +1,25 @@
+---
+- name: Get Device Facts
+  hosts: "vsrx_devices"
+  roles:
+    - Juniper.junos 
+  connection: local
+  gather_facts: no
+
+  vars:
+    user: "{{ ansible_user }}"
+
+  tasks:
+    - name: Checking NETCONF connectivity
+      wait_for: 
+        host: "{{ ansible_host }}"
+        port: 830 
+        timeout: 5
+
+    - name: Retrieving information from devices running Junos OS
+      juniper_junos_facts:
+        host: "{{ ansible_host }}"
+
+    - name: Print version
+      debug:
+        var: junos.version

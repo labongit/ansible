@@ -1,0 +1,30 @@
+---
+- name: Manipulate the configuration of Junos devices
+  hosts: "vsrx_devices"
+  connection: local
+  gather_facts: no
+  roles:
+    - Juniper.junos
+
+  vars:
+    provider_creds:
+      host: "{{ ansible_host }}"
+      user: "admin"
+      timeout: 3600
+      port: 22
+      ssh_keyfile: /home/admin/ansible/id_rsa
+      logfile: /home/admin/ansible/output/{{ inventory_hostname }}.log
+
+  tasks:
+    - name: Retrieve the committed configuration
+      juniper_junos_config:
+        provider: "{{ provider_creds }}"
+        retrieve: 'committed'
+        diff: false
+        check: false
+        commit: false
+      register: response
+
+    - name: Print the lines in the config.
+      debug:
+        var: response.config_lines
